@@ -176,44 +176,75 @@ import android.view.accessibility.AccessibilityNodeInfo
 
 
 
+//class MyAccessibilityService : AccessibilityService() {
+//    override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+//
+//        fun getChild(info: AccessibilityNodeInfo) {
+//            val i = info.childCount
+//            for (p in 0 until i) {
+//                val n = info.getChild(p)
+//                if (n != null) {
+//                    n.viewIdResourceName
+//                    Log.d("sabkuch", "getChild: $n.viewIdResourceName ")
+//                    if (n.text != null) {
+//                        n.text.toString()
+//                        Log.d("text", n.text.toString())
+//                    }
+//                    getChild(n)
+//                }
+//            }
+//        }
+//
+//
+//        try {
+//    val parentNodeInfo = event?.source ?: return
+//            getChild(parentNodeInfo)
+//            Log.d("parent nodeInfo", parentNodeInfo.toString())
+//
+//            Log.d("tttag", "Event Name : " + AccessibilityEvent.eventTypeToString(event.getEventType()));
+//
+//
+//}catch(e:Exception){
+//    Log.d(e.toString(),"hello")
+//
+//}}
+//
+//
+//
+//
+//
+//
+//
+//    override fun onInterrupt() {
+//        // Handle service interruption if needed
+//    }
+//}
+
+
 class MyAccessibilityService : AccessibilityService() {
+
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
 
-        fun getChild(info: AccessibilityNodeInfo) {
-            val i = info.childCount
-            for (p in 0 until i) {
-                val n = info.getChild(p)
-                if (n != null) {
-                    n.viewIdResourceName
-                    Log.d("sabkuch", "getChild: $n.viewIdResourceName ")
-                    if (n.text != null) {
-                        n.text.toString()
-                        Log.d("text", n.text.toString())
-                    }
-                    getChild(n)
-                }
+            val rootNode = rootInActiveWindow ?: return
+            val screenContent = StringBuilder()
+            getChild(rootNode, screenContent)
+            Log.d("ScreenContent", screenContent.toString())
+
+    }
+
+    private fun getChild(info: AccessibilityNodeInfo, content: StringBuilder) {
+        if (info.text != null) {
+            content.append(info.text.toString()).append("\n")
+        }
+        val childCount = info.childCount
+        for (i in 0 until childCount) {
+            val childNode = info.getChild(i)
+            if (childNode != null) {
+                getChild(childNode, content)
+                childNode.recycle()  // Recycle node to prevent memory leaks
             }
         }
-
-
-        try {
-    val parentNodeInfo = event?.source ?: return
-            getChild(parentNodeInfo)
-            Log.d("parentnodeInfo", parentNodeInfo.toString())
-
-            Log.d("tttag", "Event Name : " + AccessibilityEvent.eventTypeToString(event.getEventType()));
-
-
-}catch(e:Exception){
-    Log.d(e.toString(),"hello")
-
-}}
-
-
-
-
-
-
+    }
 
     override fun onInterrupt() {
         // Handle service interruption if needed
