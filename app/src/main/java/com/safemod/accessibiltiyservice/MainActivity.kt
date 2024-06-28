@@ -1,12 +1,13 @@
 package com.safemod.accessibiltiyservice
 
+import android.app.admin.DevicePolicyManager
+import android.content.ComponentName
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,21 +18,11 @@ import android.provider.Settings
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 
 import androidx.compose.ui.unit.dp
-
-
-
-
-
-
-
-
-
-
+import androidx.core.app.ActivityCompat
 
 
 class MainActivity : ComponentActivity() {
@@ -44,15 +35,25 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen()
+                    MainScreen {promptForDeviceAdmin()}
                 }
 
         }
     }
+
+    private fun promptForDeviceAdmin() {
+        val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
+        val componentName = ComponentName(this, MyDeviceAdminReceiver::class.java)
+        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName)
+        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "This app requires device admin permissions.")
+        startActivity(intent)
+    }
 }
 
 @Composable
-fun MainScreen() {
+fun MainScreen(promptForDeviceAdmin: () -> Unit) {
+
+
     val context = LocalContext.current
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -70,5 +71,9 @@ fun MainScreen() {
         }) {
             Text("Enable Accessibility Service")
         }
+        Button(onClick = { promptForDeviceAdmin() }) {
+            Text(text = "Enable deviceAdmin Service")
+        }
     }
 }
+

