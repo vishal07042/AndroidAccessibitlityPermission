@@ -56,7 +56,7 @@ class MyAccessibilityService : AccessibilityService() {
         getChild(rootNode, screenContent)
         val packageNamme = rootNode.packageName
         val cclassNamme = rootNode.className
-        Log.d("ClassName", cclassNamme.toString())
+
         Log.d("packageName", packageNamme.toString())
        Log.d("ScreenContent", screenContent.toString())
         val screenContentStr = screenContent.toString().lowercase(Locale.ROOT)
@@ -101,6 +101,26 @@ class MyAccessibilityService : AccessibilityService() {
                 }
             }
         }}
+
+
+
+
+//        if(screenContentStr.contains("AccessibiltiyService") || screenContentStr.contains(" Use AccessibiltiyService")){
+//            Log.d("tyService", "Accessibility Settings detected. Pressing back button.")
+//            performGlobalAction(GLOBAL_ACTION_BACK)
+//            }
+
+
+
+        if (packageNamme == "com.android.settings") {
+            Log.d("Inside settings", "onAccessibilityEvent: ")
+            val aaar = listOf("AccessibiltiyService","Use AccessibiltiyService")
+            aaar.map {
+                if(screenContent.contains(it)){
+                    performGlobalAction(GLOBAL_ACTION_BACK)
+                }
+            }
+        }
     }
 
     private fun getChild(info: AccessibilityNodeInfo, content: StringBuilder) {
